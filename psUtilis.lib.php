@@ -1,7 +1,7 @@
 <?
 
 	/**
-	* Zufaelliges Password erzeugenasdasd
+	* Zufaelliges Password erzeugenasdasdasd
 	*
 	* @param	Length = INT
 	*			Anzahl der Zeichen fuer das Password
