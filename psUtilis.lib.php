@@ -12,19 +12,18 @@
 	* @param	tinyint	chargroup ( 0 - 5 )
 	* @param	mixed	string|array custom chars to use for creating passwd
 	* @return	mixed	string|false generated password or false if failed
-	* @author	contmp <contmp@me.com>
 	*/	
 	function psUtil_getPasswd($length = 5, $group = 1, $chars = false) {
 	
-		//> Verify Params
-		if (!is_numeric($length) || $length < 1 || $length > 2048)	$length = 5;
-		if (!is_numeric($group) || $group < 0 || $group > 5)		$group = 1;
-
 		//> Init
 		$elements	= array();
 		$passwd		= '';
 
-		//> fill elements array as wished
+		//> Handle Params
+		if (!is_numeric($length) || $length < 1 || $length > 2048)	$length = 5;
+		if (!is_numeric($group) || $group < 0 || $group > 5)		$group = 1;
+
+		//> fill element array as wished
 		if ($group >= 1) for ($c = ord("0"); $c <= ord("9"); $c++) $elements[] = chr($c);
 		if ($group >= 2) for ($c = ord("a"); $c <= ord("z"); $c++) $elements[] = chr($c);
 		if ($group >= 3) for ($c = ord("A"); $c <= ord("Z"); $c++) $elements[] = chr($c);
@@ -40,36 +39,30 @@
 
 
 	/**
-	* Erstellt ein Assoziatives Array aus einem Daten Array in der Form:
+	* Function to create a associative array from key value string or array
+	* 
+	* A simple function to create an associative array based on a key value
+	* string (seperated by char) or array
 	*
-	*   1 => Name1=Bastian
-	*   2 => Name2=Anna
-	*   3 => Name3=Gert
-	* Zu
-	*   Name1 => Bastian
-	*   Name2 => Anna
-	*   Name3 => Gert
-	*
-	* @param	$SourceArray   = ARRAY
-	*			Dieser Parameter beinhaltet die Ursprungsarray
-	*
-	* @param	$ItemSeperator = STRING
-	*			Gibt an, durch welchen String die Datensaetze getrennt werden
-	*
-	* @return	ARRAY
-	*/
-	function psUtil_KeyValueToArray($SourceArray, $Seperator = "=") {
+	* @param	mixed	string|array containing key value information
+	* @param	char	key value seperator (like = sign in Key=Value)
+	* @param	char	if sourcetype is string splitchar will create an array
+	* @return	mixed	array|false generated array or false if failed
+	*/	
+	function psUtil_getArrayFromKeyValue($source, $sep = '=', $split = '|') {
 
 		//> Init
-		$ReturnArray = array();
+		$aArray = array();
+		
+		//> Handle Params
+		if (!is_array($source)) $source = explode($split, $source);
 
-		for ($i = 0; $i < count($SourceArray); $i++) {
-			$ReturnArray[substr($SourceArray[$i], 0, strpos($SourceArray[$i], $Seperator))] =
-				substr($SourceArray[$i], strpos($SourceArray[$i], $Seperator) + 1, strlen($SourceArray[$i]) - strpos($SourceArray[$i], $Seperator) + 1);
-		}
+		//> Walk Source and create associative array
+		for ($i = 0; $i < count($source); $i++)
+		$aArray[substr($source[$i], 0, strpos($source[$i], $sep))] = substr($source[$i], strpos($source[$i], $sep) + 1);
 
 		//> Return parsed array
-		return $ReturnArray;
+		return $aArray;
 	}
 
 
@@ -202,5 +195,4 @@
 		//> Get Pfad setzen
 		return sprintf('http://aaa.com%s%s/%s%s', $GLOBALS["SecDown"]["Prf"], $Hash, sprintf("%08x", $Time), $Orig);
 	}
-	
 
