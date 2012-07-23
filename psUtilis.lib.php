@@ -1,46 +1,41 @@
 <?
 
 	/**
-	* Zufaelliges Password erzeugen
+	* Function to create a random password
+	* 
+	* A simple function to create random password, based on predefined or
+	* custom charset
+	* Calling function without params will result in a pin like password like
+	* 90210 
 	*
-	* @param	Length = INT
-	*			Anzahl der Zeichen fuer das Password
-	*
-	* @param	pKomplexitaet = INT
-	*			Komplexitaetsgrad des Passwords
-	*				0 - Benutzerdefiniert
-	*				1 - nur Kleinbuchstaben
-	*				2 - auch Grossbuchstaben
-	*				3 - Zahlen auch noch
-	*				4 - Sonderzeichen
-	*
-	* @param	pZeichen = STRING
-	*			Zeichen die verwendet werden sollen (String)
-	*
-	* @return	STRINT
-	*			Zufaelliges Password
-	*
-	*/
-	function psUtil_CreatePassword($Length, $pKomplexitaet, $pZeichen) {
+	* @param	int		length of desired password
+	* @param	tinyint	chargroup ( 0 - 5 )
+	* @param	mixed	string|array custom chars to use for creating passwd
+	* @return	mixed	string|false generated password or false if failed
+	* @author	contmp <contmp@me.com>
+	*/	
+	function psUtil_getPasswd($length = 5, $group = 1, $chars = false) {
+	
+		//> Verify Params
+		if (!is_numeric($length) || $length < 1 || $length > 2048)	$length = 5;
+		if (!is_numeric($group) || $group < 0 || $group > 5)		$group = 1;
 
 		//> Init
-		$lZeichen  = array();
-		$lPassword = "";
+		$elements	= array();
+		$passwd		= '';
 
-		//> Generate Char Array
-		if ($pKomplexitaet >= 1) for ($c = ord("0"); $c <= ord("9"); $c++) $lZeichen[] = chr($c);
-		if ($pKomplexitaet >= 2) for ($c = ord("a"); $c <= ord("z"); $c++) $lZeichen[] = chr($c);
-		if ($pKomplexitaet >= 3) for ($c = ord("A"); $c <= ord("Z"); $c++) $lZeichen[] = chr($c);
-		if ($pKomplexitaet >= 4) array_push($lZeichen, "!", "?", "$", "%", "&", "/", "(", ")", "=", "?", "+", "-", "*", "\\");
+		//> fill elements array as wished
+		if ($group >= 1) for ($c = ord("0"); $c <= ord("9"); $c++) $elements[] = chr($c);
+		if ($group >= 2) for ($c = ord("a"); $c <= ord("z"); $c++) $elements[] = chr($c);
+		if ($group >= 3) for ($c = ord("A"); $c <= ord("Z"); $c++) $elements[] = chr($c);
+		if ($group >= 4) $elements = array_merge($elements, str_split("!?$%&/()=?+-*"));
+		if ($chars) $elements = ((is_array($chars)) ? $chars : str_split($chars, 1));
 
-		//> Ggfl. nur eigene Zeichen verwenden
-		if ($pKomplexitaet == 0) $lZeichen = $pZeichen;
-
-		//> Passwort erstellen
-		for ($i = 0; $i < $Length; $i++) $lPassword .= $lZeichen[rand(0, count($lZeichen) -1)];
+		//> Create Password now
+		for ($i = 0; $i < $length; $i++) $passwd .= $elements[rand(0, count($elements) -1)];
 
 		//> Throw Password
-		return $lPassword;
+		return $passwd;
 	}
 
 
