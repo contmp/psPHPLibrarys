@@ -15,11 +15,11 @@
 	*/	
 	function psUtil_getPasswd($length = 5, $group = 1, $chars = false) {
 	
-		//> Init
+		//> init
 		$elements	= array();
 		$passwd		= '';
 
-		//> Handle Params
+		//> handle Params
 		if (!is_numeric($length) || $length < 1 || $length > 2048)	$length = 5;
 		if (!is_numeric($group) || $group < 0 || $group > 5)		$group = 1;
 
@@ -30,10 +30,10 @@
 		if ($group >= 4) $elements = array_merge($elements, str_split("!?$%&/()=?+-*"));
 		if ($chars) $elements = ((is_array($chars)) ? $chars : str_split($chars, 1));
 
-		//> Create Password now
+		//> create password
 		for ($i = 0; $i < $length; $i++) $passwd .= $elements[rand(0, count($elements) -1)];
 
-		//> Throw Password
+		//> throw password
 		return $passwd;
 	}
 
@@ -51,88 +51,56 @@
 	*/	
 	function psUtil_getArrayFromKeyValue($source, $sep = '=', $split = '|') {
 
-		//> Init
+		//> init
 		$aArray = array();
 		
-		//> Handle Params
+		//> handle params
 		if (!is_array($source)) $source = explode($split, $source);
 
-		//> Walk Source and create associative array
+		//> walk source and create associative array
 		for ($i = 0; $i < count($source); $i++)
 		$aArray[substr($source[$i], 0, strpos($source[$i], $sep))] = substr($source[$i], strpos($source[$i], $sep) + 1);
 
-		//> Return parsed array
+		//> throw created array
 		return $aArray;
 	}
 
 
 	/**
-	* Funktion zum saeubern eines Strings
+	* Function to filter out unwanted chars for local file system
+	* 
+	* A simple function to filter unsouported chars from a string
+	* which allows you to verify if input if compatible
 	*
-	* @param	$String         = STRING
-	*			Ausgangsname, z.B: ICH DU CACHA !/?" PENNER
-	*			A - 9 wird erlaubt
-	*
-	* @param	$LowerCase      = BOOL
-	*			Bestimmt ob der Rueckgabewert in Kleinbuchstaben erfolgen soll
-	*
-	* @param	$AllowedSymbols = STRING
-	*			Manipulieren Sie mit dieser Zeichenkette die erlaubten Zeichen
-	*
-	* @return	String ICHDUCACHAPENNER
-	*
-	*/
-	function psUtil_GetClearSting($String, $LowerCase = false, $AllowedSymbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789") {
+	* @param	string	containing wanted filename
+	* @param	enum	os selecting default = win other : mac
+	* @return	string	cleared filename
+	*/	
+	function psUtil_getValidFilename($filename, $os = "Win") {
 
-		//> String saeubern
-		for ($i = 0; $i < strlen($String); $i++) {
-			if (strpos($AllowedSymbols, substr($String, $i, 1)) !== false) 
-				$ReturnString .= substr($String, $i, 1);
-		}
+		//> init
+		$Not_Allowed_In_Mac		= "/:";
+		$Not_Allowed_In_Windows	= "\\/:*?\"<>|";
 
-		//> String zurueckgebenç
-		return (($LowerCase) ? strtolower($ReturnString) : $ReturnString);
-	}
+		//> clear  filename
+		switch ($os) {
+		
+			case 'Mac':
+				for ($i = 0; $i < strlen($Not_Allowed_In_Mac); $i++)
+					$filename = str_replace(substr($Not_Allowed_In_Mac, $i, 1), '', $filename);
+				break;
 
-
-	/**
-	* Funktion zum stripen eines Strings
-	*
-	* @param	$String = STRING
-	*			Ausgangsname, z.B: ICH DU CACHA !/?" PENNE
-	*
-	* @param	$Mode = ENUM
-	*			{Windows, Custom}
-	*
-	* @param	$FilterSymbols  = Array
-	*			Beinhaltet Symbol in einem Array, die rausgefiltert werden sollen,
-	*			nur aktiv im Verbund mit dem Modus "Custom"
-	*
-	* @return  String ICH DU CACHA ! PENNE
-	*
-	*/
-	function psUtil_GetStripedSting($String, $Mode = "Windows", $FilterSymbols = array()) {
-
-		//> Init
-		$Not_Allowed_In_Windows = "\\/:*?\"<>|";
-		$ReturnString = "";
-
-		//> String saeubern
-		switch ($Mode) {
-
-			case "Windows":
-
-				for ($i = 0; $i < strlen($String); $i++)
-					if (strpos($Not_Allowed_In_Windows, substr($String, $i, 1)) === false)
-						$ReturnString .= substr($String, $i, 1);
+			default:
+			case "Win":
+				for ($i = 0; $i < strlen($Not_Allowed_In_Windows); $i++)
+					$filename = str_replace(substr($Not_Allowed_In_Windows, $i, 1), '', $filename);
 				break;
 
 		};
 
-		//> String zurueckgeben
-		return $ReturnString;
+		//> throw cleaned filename
+		return $filename;
 	}
-
 
 	/**
 	* Funktion zum konvertieren einer String-Liste
@@ -195,4 +163,3 @@
 		//> Get Pfad setzen
 		return sprintf('http://aaa.com%s%s/%s%s', $GLOBALS["SecDown"]["Prf"], $Hash, sprintf("%08x", $Time), $Orig);
 	}
-
