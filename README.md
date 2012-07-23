@@ -1,5 +1,5 @@
 psPHPLibrarys
-=
+
 
 psUtilis.lib.php
 ----------------
