@@ -101,6 +101,30 @@
 		//> throw cleaned filename
 		return $filename;
 	}
+	
+	/**
+	* Function to create a lighttpd mod_secdownload link
+	* 
+	* A tiny function to create a compatible url for lighttpds
+	* mod_secdownload.
+	* See: http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs:ModSecDownload
+	* for more details
+	*
+	* @param	string	filename (leading / would be a good idea)
+	* @param	string	password matched config file
+	* @param	string	prefix matched config file
+	* @param	pattern	regular expression to match you domain and needs
+	* @return	string	created sec download url
+	*/	
+	function psUtil_getSecDownloadLink($filename, $secret = 'verysecret', $prefix = '/dl/', $pattern = 'http://subdomain.domain.tld%s%s/%s%s') {
+	
+		//> init
+		$time = time();
+
+		//> thor url
+		return sprintf($pattern, $prefix, md5($secret.$filename.sprintf("%08x", $time)), sprintf("%08x", $time), $filename);
+	}
+	
 
 	/**
 	* Funktion zum konvertieren einer String-Liste
@@ -139,27 +163,4 @@
 		//> Thorw formated list
 		return $Formated;
 
-	}
-	
-	
-	/**
-	* Funktion zum erstellen eines SecDownload Links
-	*
-	* @param	$Data = STRING
-	*			Enthält eine Liste als String getrennt durch einen Umbruch
-	*
-	* @return	String
-	*			Gibt den kompletten SecDownloadLink zurück
-	*
-	**/
-	function psUtil_GetSecDownloadLink($FileID) {
-	
-		return false;
-
-		//> Hash Datei erzeugen
-		$Time = time();
-		$Hash = md5($GLOBALS["SecDown"]["Sec"].$Orig.sprintf("%08x", $Time));
-
-		//> Get Pfad setzen
-		return sprintf('http://aaa.com%s%s/%s%s', $GLOBALS["SecDown"]["Prf"], $Hash, sprintf("%08x", $Time), $Orig);
 	}
