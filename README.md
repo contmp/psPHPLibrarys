@@ -4,4 +4,4 @@ psPHPLibrarys
 psUtilis.lib.php
 ----------------
 
-asd
+require 'psPHPLibrarys/psUtils.lib.php';
